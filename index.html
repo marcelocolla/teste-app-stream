@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Player rádio online</title>
+
+    </head>
+    <body>
+        <div class="app">
+            
+            <h1><strong>Rádio Ampére</strong> ao vivo!</h1>
+
+            <div id="container-player-radio">
+                    
+
+                <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+                <div id="jp_container_1" class="jp-audio-stream">
+                    <div class="jp-type-single">
+                        <div class="jp-gui jp-interface">
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-play loading" title="Play rádio">play</a></li>
+                                <li><a href="javascript:;" class="jp-pause loading" title="Stop rádio">pause</a></li>
+                                <li class="vol"><a href="javascript:;" class="jp-mute" title="Mudo">mute</a></li>
+                                <li class="vol"><a href="javascript:;" class="jp-unmute" title="unmute">unmute</a></li>
+                                <br class="cb">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <br class="cb" />
+            </div>
+
+
+
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="js/jquery.jplayer.min.js"></script>
+        <script type="text/javascript">
+        ;(function($){
+
+            // title: "Ouvindo ao vivo",
+            var stream = {
+                title : " ",
+                mp3: "http://187.60.210.9:8000/;stream.nsv"
+            },
+            ready = false;
+
+            var ctnAudio    = $("#jquery_jplayer_1"),
+                count       = 0;
+
+            ctnAudio.jPlayer({
+                autoplay: true,
+                ready: function (event) {
+                    ready = true;
+                    $(this).jPlayer("setMedia", stream).jPlayer("play");
+                },
+                pause: function() {
+
+                    $(this).jPlayer("clearMedia");
+                    count = 0;
+
+                },
+                error: function (event){
+
+
+                    var target = $(this);
+
+                    if(ready && event.jPlayer.error.type === $.jPlayer.error.URL_NOT_SET) {
+                        
+                        // Setup the media stream again and play it.
+                        target.jPlayer("setMedia", stream).jPlayer("play");
+                        $( "#jp_container_1" ).find( "ul.jp-controls a" ).removeClass( "loading" );
+
+                        alert( event.jPlayer.error.type );
+
+                    } else {
+
+                        if (count >= 20){
+
+                            $("#jp_container_1").hide();
+                            $(".control-radio").find( "audio" ).css("display", "block");
+
+                        } else {
+
+                            setTimeout(function (){
+                                target.jPlayer("setMedia", stream).jPlayer("play");
+                            }, 700);
+
+                        };
+
+                    };
+
+                    count++;
+
+                },
+                // swfPath: "js",
+                swfPath: "http://www.jplayer.org/latest/js/Jplayer.swf",
+                solution: "html,flash",
+                supplied: "mp3",
+                preload: "auto",
+                wmode: "window",
+                keyEnabled: true
+
+            }).bind($.jPlayer.event.loadstart, function(event) {
+                $( "#jp_container_1" ).find( "ul.jp-controls a" ).removeClass( "loading" );
+            });
+
+        }(window.jQuery));
+        
+
+        // ---
+        // app.initialize();
+
+
+
+        </script>
+    </body>
+</html>
